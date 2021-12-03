@@ -5,6 +5,7 @@ using namespace std;
 static auto day = setDay(3, "Binary Diagnostic",
 	[&]()
 	{
+		int const N = 12;
 		auto lines = lines_in_file("input/3.txt");
 
 		array<int, 12> bitsums = { 0 };
@@ -16,124 +17,56 @@ static auto day = setDay(3, "Binary Diagnostic",
 			}
 		}
 
+		string gamma, epsilon;
+
 		int half = lines.size() / 2;
-
-		int gamma = 0;
-		int epsilon = 0;
-		for (int i = 0; i < 12; ++i)
+		for (auto sum : bitsums)
 		{
-			if (bitsums[11-i] > half)
-			{
-				gamma += (1 << i);
-			}
-			else
-			{
-				epsilon += (1 << i);
-			}
+			gamma.push_back('0' + (sum > half));
+			epsilon.push_back('0' + (sum <= half));
 		}
 
-
-
-		auto oxlines = lines;
-		decltype(lines) oxnext;
-
-		auto most_common = [](auto lines, int i)
+		auto life_support_rating = [N](decltype(lines) lines, auto compare)
 		{
-			int one = 0;
-			int zero = 0;
-			for (auto line : lines)
+			auto find_value_to_keep = [](auto& lines, int bit, auto compare)
 			{
-				if (line[i] == '0')
+				int one = 0, zero = 0;
+				for (auto line : lines)
 				{
-					zero++;
+					one += (line[bit] == '1');
+					zero += (line[bit] == '0');
 				}
-				else
+
+				return compare(one, zero) ? '1' : '0';
+			};
+
+			decltype(lines) next;
+
+			for (int i = 0; i < N; ++i)
+			{
+				if (lines.size() > 1)
 				{
-					one++;
+					next.clear();
+					char keep = find_value_to_keep(lines, i, compare);
+
+					for (auto& line : lines)
+					{
+						if (line[i] == keep)
+						{
+							next.push_back(line);
+						}
+					}
+					swap(lines, next);
 				}
 			}
 
-			return one >= zero ? '1' : '0';
+			return lines[0];
 		};
 
-		for (int i = 0; i < 12; ++i)
-		{
-			if (oxlines.size() > 1)
-			{
-				char keep = most_common(oxlines, i);
+		auto oxygen = life_support_rating(lines, std::greater_equal());
+		auto co2 = life_support_rating(lines, std::less());
 
-				for (auto& line : oxlines)
-				{
-					if (line[i] == keep)
-					{
-						oxnext.push_back(line);
-					}
-				}
-			}
-			else
-			{
-				break;
-			}
-
-			swap(oxlines, oxnext);
-			oxnext.clear();
-		}
-
-		auto colines = lines;
-		decltype(lines) conext;
-		auto least_common = [](auto lines, int i)
-		{
-			int bitsum = 0;
-			int one = 0;
-			int zero = 0;
-			for (auto line : lines)
-			{
-				if (line[i] == '0')
-				{
-					zero++;
-				}
-				else
-				{
-					one++;
-				}
-			}
-
-			return one < zero ? '1' : '0';
-		};
-
-		for (int i = 0; i < 12; ++i)
-		{
-			if (colines.size() > 1)
-			{
-				char keep = least_common(colines, i);
-
-				for (auto& line : colines)
-				{
-					if (line[i] == keep)
-					{
-						conext.push_back(line);
-					}
-				}
-			}
-			else
-			{
-				break;
-			}
-
-			swap(colines, conext);
-			conext.clear();
-		}
-
-		uint64_t ox = 0;
-		uint64_t co = 0;
-
-		for (int i = 0; i < 12; ++i)
-		{
-			ox += (1 << i) * (oxlines[0][11-i] == '1');
-			co += (1 << i) * (colines[0][11-i] == '1');
-		}
-
-		println("1: ", gamma * epsilon);
-		println("2: ", ox*co);
+		println("1: ", stoi(gamma, nullptr, 2) * stoi(epsilon, nullptr, 2));
+		println("2: ", stoi(oxygen, nullptr, 2) * stoi(co2, nullptr, 2));
 	}
 );
