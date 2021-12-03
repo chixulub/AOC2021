@@ -32,30 +32,35 @@ static auto day = setDay(3, "Binary Diagnostic",
 			}
 		}
 
-		println("1: ", gamma * epsilon);
 
 
 		auto oxlines = lines;
 		decltype(lines) oxnext;
 
-		auto bitsum = [](auto lines, int i)
+		auto most_common = [](auto lines, int i)
 		{
-			int bitsum = 0;
+			int one = 0;
+			int zero = 0;
 			for (auto line : lines)
 			{
-				bitsum += (line[i] - '0');
+				if (line[i] == '0')
+				{
+					zero++;
+				}
+				else
+				{
+					one++;
+				}
 			}
 
-			return bitsum;
+			return one >= zero ? '1' : '0';
 		};
 
 		for (int i = 0; i < 12; ++i)
 		{
 			if (oxlines.size() > 1)
 			{
-				int half = oxlines.size() / 2;
-				int bs = bitsum(oxlines, i);
-				char keep = bs >= half ? '1' : '0';
+				char keep = most_common(oxlines, i);
 
 				for (auto& line : oxlines)
 				{
@@ -76,14 +81,31 @@ static auto day = setDay(3, "Binary Diagnostic",
 
 		auto colines = lines;
 		decltype(lines) conext;
+		auto least_common = [](auto lines, int i)
+		{
+			int bitsum = 0;
+			int one = 0;
+			int zero = 0;
+			for (auto line : lines)
+			{
+				if (line[i] == '0')
+				{
+					zero++;
+				}
+				else
+				{
+					one++;
+				}
+			}
+
+			return one < zero ? '1' : '0';
+		};
 
 		for (int i = 0; i < 12; ++i)
 		{
 			if (colines.size() > 1)
 			{
-				int half = colines.size() / 2;
-				int bs = bitsum(colines, i);
-				char keep = bs >= half ? '0' : '1';
+				char keep = least_common(colines, i);
 
 				for (auto& line : colines)
 				{
@@ -111,6 +133,7 @@ static auto day = setDay(3, "Binary Diagnostic",
 			co += (1 << i) * (colines[0][11-i] == '1');
 		}
 
+		println("1: ", gamma * epsilon);
 		println("2: ", ox*co);
 	}
 );
