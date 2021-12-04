@@ -3,7 +3,7 @@
 using namespace std;
 
 static auto day = setDay(3, "Binary Diagnostic",
-	[&]()
+	[&](auto answer)
 	{
 		int const N = 12;
 		auto lines = lines_in_file("input/3.txt");
@@ -19,7 +19,7 @@ static auto day = setDay(3, "Binary Diagnostic",
 
 		string gamma, epsilon;
 
-		int half = lines.size() / 2;
+		auto half = lines.size() / 2;
 		for (auto sum : bitsums)
 		{
 			gamma.push_back('0' + (sum > half));
@@ -66,7 +66,10 @@ static auto day = setDay(3, "Binary Diagnostic",
 		auto oxygen = life_support_rating(lines, std::greater_equal());
 		auto co2 = life_support_rating(lines, std::less());
 
-		println("1: ", stoi(gamma, nullptr, 2) * stoi(epsilon, nullptr, 2));
-		println("2: ", stoi(oxygen, nullptr, 2) * stoi(co2, nullptr, 2));
+		int a = stoi(gamma, nullptr, 2) * stoi(epsilon, nullptr, 2);
+		int b = stoi(oxygen, nullptr, 2) * stoi(co2, nullptr, 2);
+
+		answer(1, a);
+		answer(2, b);
 	}
 );

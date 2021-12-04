@@ -16,13 +16,41 @@
 
 #include "ivec2.h"
 
-using DayMap = std::map<uint32_t, std::pair<std::string, std::function<void()>>>;
+
+extern int g_num_runs;
+extern int g_active_day;
+
+inline void setNumRuns(int runs)
+{
+	g_num_runs = runs;
+}
+
+inline void setActiveDay(int day)
+{
+	g_active_day = day;
+}
+
+using day_output = std::function<void(int, int)>;
+
+struct Day {
+	int id;
+	std::string description;
+	std::function<void(day_output)> run;
+
+};
+
+using DayMap = std::map<int, Day>;
 DayMap& getDayMap();
+
+inline Day& getDay(int id)
+{
+	return getDayMap().at(id);
+}
 
 template<typename Function>
 bool setDay(int day, std::string const& description, Function func)
 {
-	getDayMap()[day] = { description, func };
+	getDayMap()[day] = { day, description, func };
 
 	return true;
 }
@@ -591,7 +619,17 @@ struct Stopwatch
 	{
 		using namespace std::chrono;
 		auto diff = high_resolution_clock::now() - m_startTime;
-		std::cout << duration_cast<milliseconds>(diff).count() << "ms" << std::endl;
+		auto ms = duration_cast<milliseconds>(diff).count();
+
+		if (g_num_runs == 1)
+		{
+			std::cout << ms << "ms" << std::endl;
+		}
+		else
+		{
+			float scale = 1.0f / g_num_runs;
+			std::cout << ms*scale << "ms averaged over " << g_num_runs << " runs" << std::endl;
+		}
 	}
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime;
@@ -636,3 +674,22 @@ inline auto split(std::string const& str, char delimiter, Transform&& transform)
 
 	return result;
 };
+
+inline void output(int part, int value)
+{
+	if (g_num_runs == 1)
+	{
+		println(part, ": ", value);
+	}
+};
+
+inline void runDay(Day& day)
+{
+	Stopwatch localExecutionTimer;
+	println("\n>>> Day ", day.id, ": \"", day.description, "\"");
+	for (int i = 0; i < g_num_runs; ++i)
+	{
+		day.run(output);
+	}
+	print("<<< Day ", day.id, " took ");
+}

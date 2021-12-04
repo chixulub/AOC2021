@@ -1,34 +1,33 @@
 #include "Common.h"
 
-DayMap& getDayMap()
-{
-	static DayMap dayMap;
-	return dayMap;
-}
-
 int main(int, char**)
 {
 	Stopwatch globalExecutionTimer;
 
-	uint32_t activeDay = 4;
+	//setActiveDay(4);
+	setNumRuns(1000);
 
-	if (activeDay)
+	if (g_active_day)
 	{
-		println("\n>>> Day ", activeDay, ": \"", getDayMap().at(activeDay).first, "\"");
-		getDayMap().at(activeDay).second();
-		print("<<< Day ", activeDay, " took ");
+		runDay(getDay(g_active_day));
 	}
 	else
 	{
 		println("Running all ", getDayMap().size(), " days...");
 		for (auto& it : getDayMap())
 		{
-			Stopwatch localExecutionTimer;
-			println("\n>>> Day ", it.first, ": \"", it.second.first, "\"");
-			it.second.second();
-			print("<<< Day ", it.first, " took ");
+			runDay(it.second);
 		}
-
-		print("\nTotal time: ");
 	}
+
+	print("\nTotal time: ");
+}
+
+int g_num_runs = 1; // Single run by default, no benchmarking.
+int g_active_day = 0; // Run all days by default.
+
+DayMap& getDayMap()
+{
+	static DayMap dayMap;
+	return dayMap;
 }

@@ -3,7 +3,7 @@
 using namespace std;
 
 static auto day = setDay(1, "Sonar Sweep",
-	[&]()
+	[&](auto answer)
 	{
 		auto nums = numbers_in_file<int>("input/1.txt");
 		int previous = numeric_limits<int>::max();
@@ -24,7 +24,7 @@ static auto day = setDay(1, "Sonar Sweep",
 			}
 		);
 
-		println("1: ", deeper1);
-		println("2: ", deeper2);
+		answer(1, deeper1);
+		answer(2, deeper2);
 	}
 );

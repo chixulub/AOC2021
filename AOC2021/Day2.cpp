@@ -5,7 +5,7 @@ using namespace std;
 
 
 static auto day = setDay(2, "Dive!",
-	[&]()
+	[&](auto answer)
 	{
 		auto lines = lines_in_file("input/2.txt");
 
@@ -41,7 +41,7 @@ static auto day = setDay(2, "Dive!",
 		}
 
 
-		println("1: ", x * y1);
-		println("2: ", x * y2);
+		answer(1, x * y1);
+		answer(2, x * y2);
 	}
 );
