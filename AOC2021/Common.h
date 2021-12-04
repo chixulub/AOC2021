@@ -615,3 +615,24 @@ inline void println(T&& t, TT&&... tt)
 	print(tt...);
 	std::cout << std::endl;
 }
+
+template<typename Transform>
+inline auto split(std::string const& str, char delimiter, Transform&& transform)
+{
+	using T = decltype(transform(std::string()));
+
+	std::vector<T> result;
+
+	std::stringstream ss(str);
+
+	std::string part;
+	while (std::getline(ss, part, delimiter))
+	{
+		if (!part.empty())
+		{
+			result.push_back(transform(part));
+		}
+	}
+
+	return result;
+};

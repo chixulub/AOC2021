@@ -10,7 +10,7 @@ int main(int, char**)
 {
 	Stopwatch globalExecutionTimer;
 
-	uint32_t activeDay = 3;
+	uint32_t activeDay = 4;
 
 	if (activeDay)
 	{
