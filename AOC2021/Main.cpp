@@ -4,8 +4,8 @@ int main(int, char**)
 {
 	Stopwatch globalExecutionTimer;
 
-	//setActiveDay(4);
-	setNumRuns(1000);
+	//setActiveDay(5);
+	//setNumRuns(1000);
 
 	if (g_active_day)
 	{
