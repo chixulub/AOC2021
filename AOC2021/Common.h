@@ -30,13 +30,12 @@ inline void setActiveDay(int day)
 	g_active_day = day;
 }
 
-using day_output = std::function<void(int, int)>;
+using day_output = std::function<void(int, uint64_t)>;
 
 struct Day {
 	int id;
 	std::string description;
 	std::function<void(day_output)> run;
-
 };
 
 using DayMap = std::map<int, Day>;
@@ -675,7 +674,7 @@ inline auto split(std::string const& str, char delimiter, Transform&& transform)
 	return result;
 };
 
-inline void output(int part, int value)
+inline void output(int part, uint64_t value)
 {
 	if (g_num_runs == 1)
 	{

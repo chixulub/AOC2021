@@ -2,7 +2,7 @@
 
 using namespace std;
 
-auto stoi_transform = [](string const& s) { return stoi(s); };
+static auto stoi_transform = [](string const& s) { return stoi(s); };
 
 struct Board
 {
