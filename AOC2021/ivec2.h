@@ -90,6 +90,11 @@ inline ivec2 operator * (int s, ivec2 const& a)
 	return a * s;
 }
 
+inline bool operator < (ivec2 const& a, ivec2 const& b)
+{
+	return (a.x == b.x) ? (a.y < b.y) : (a.x < b.x);
+}
+
 inline std::ostream& operator << (std::ostream& os, ivec2 const& v)
 {
 	os << '(' << v.x << ',' << v.y << ')';
