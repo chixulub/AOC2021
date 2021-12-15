@@ -3,37 +3,73 @@
 
 using namespace std;
 
-int find_min(vector<string> lines)
+struct pathfinder
 {
-	int N = (int)lines.size();
+	vector<string> lines;
+	int N;
+	Grid2D<int> risk;
+	Grid2D<int> minrisk;
 
-	Grid2D<int> risk(N, N);
-	Grid2D<int> minrisk(N, N);
-
-	lines[0][0] = '0';
-	for (int y = 0; y < N; ++y)
+	pathfinder(vector<string> input)
+		: lines(input)
+		, N((int)lines.size())
+		, risk(N,N)
+		, minrisk(N,N, numeric_limits<int>::max())
 	{
-		for (int x = 0; x < N; ++x)
+		minrisk.at(0, 0) = 0;
+		for (int y = 0; y < N; ++y)
 		{
-			risk.at(x, y) = lines[y][x] - '0';
-
-			if (x == 0 && y > 0)
+			for (int x = 0; x < N; ++x)
 			{
-				minrisk.at(x, y) = minrisk.at(x, y - 1) + risk.at(x, y);
-			}
-			else if (x > 0 && y == 0)
-			{
-				minrisk.at(x, y) = minrisk.at(x - 1, y) + risk.at(x, y);
-			}
-			else
-			{
-				minrisk.at(x, y) = risk.at(x, y) + min(minrisk.at(x - 1, y), minrisk.at(x, y - 1));
+				risk.at(x, y) = lines[y][x] - '0';
 			}
 		}
 	}
 
-	return minrisk.at(N - 1, N - 1);
-}
+	bool find_min()
+	{
+		auto get_minrisk = [this](int x, int y)
+		{
+			if (minrisk.valid(x, y))
+			{
+				return minrisk.at(x, y);
+			}
+
+			return numeric_limits<int>::max();
+		};
+
+		bool hot = false;
+
+		minrisk.at(0, 0) = 0;
+		for (int y = 0; y < N; ++y)
+		{
+			for (int x = 0; x < N; ++x)
+			{
+				if (x == 0 && y == 0) continue;
+
+				int a = get_minrisk(x - 1, y);
+				int b = get_minrisk(x + 1, y);
+				int c = get_minrisk(x, y - 1);
+				int d = get_minrisk(x, y + 1);
+				int candidate = risk.at(x, y) + min(min(a, b), min(c, d));
+				int current = minrisk.at(x, y);
+
+				if (candidate < current)
+				{
+					minrisk.at(x, y) = candidate;
+					hot = true;
+				}
+			}
+		}
+
+		return hot;
+	}
+
+	int result()
+	{
+		return minrisk.at(N - 1, N - 1);
+	}
+};
 
 static auto day = setDay(15, "",
 	[&](auto answer) 
@@ -66,8 +102,14 @@ static auto day = setDay(15, "",
 			}
 		}
 
-		uint64_t part2 = find_min(newlines);
-		uint64_t part1 = find_min(lines);
+		pathfinder p1(lines);
+		pathfinder p2(newlines);
+
+		while (p1.find_min());
+		while (p2.find_min());
+
+		uint64_t part1 = p1.result();
+		uint64_t part2 = p2.result();
 
 		answer(1, part1);
 		answer(2, part2);
