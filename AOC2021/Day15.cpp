@@ -71,7 +71,7 @@ struct pathfinder
 	}
 };
 
-static auto day = setDay(15, "",
+static auto day = setDay(15, "Chiton",
 	[&](auto answer) 
 	{
 		auto lines = lines_in_file("input/15.txt");
@@ -85,10 +85,7 @@ static auto day = setDay(15, "",
 			{
 				for (int i = 0; i < M; ++i)
 				{
-					auto line = lines[i];
-					auto& nline = newlines[y * M + i];
-
-					for (auto c : line)
+					for (auto c : lines[i])
 					{
 						int n = (c - '0' + x + y);
 						if (n > 9)
@@ -96,7 +93,7 @@ static auto day = setDay(15, "",
 							n = n % 9;
 						}
 
-						nline.push_back('0' + n);
+						newlines[y * M + i].push_back('0' + n);
 					}
 				}
 			}
